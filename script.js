@@ -239,73 +239,49 @@
   });
 
   // ============================================
-  // EmailJS - Envío de detalles de la cita
+  // Envío de detalles de la cita por correo (mailto)
   // ============================================
   
-  // Función para inicializar EmailJS cuando esté disponible
-  function initializeEmailJS() {
-    // Verificar si EmailJS está disponible
-    if (typeof emailjs !== 'undefined') {
-      emailjs.init("GqQsT63h4mVTXYFBH");
-      setupEmailButton();
-    } else {
-      // Reintentar en 100ms si EmailJS aún no está disponible
-      setTimeout(initializeEmailJS, 100);
-    }
-  }
-  
-  // Configurar el botón de envío de correo
   function setupEmailButton() {
     const btnSendEmail = document.getElementById("btn-send-email");
     
     if (btnSendEmail) {
-      btnSendEmail.addEventListener("click", async () => {
-        const btnText = btnSendEmail.textContent;
-        btnSendEmail.textContent = "Enviando... 📮";
-        btnSendEmail.disabled = true;
+      btnSendEmail.addEventListener("click", () => {
+        const fecha = dateState.date ? formatDateSpanish(dateState.date) : "No especificada";
+        const hora = dateState.time || "No especificada";
+        const comida = dateState.food || "No especificada";
+        const mensaje = document.getElementById("final-message").textContent;
         
-        try {
-          // Preparar los datos para el correo
-          const emailParams = {
-            to_email: "juansilva200310@gmail.com",
-            fecha_cita: dateState.date ? formatDateSpanish(dateState.date) : "No especificada",
-            hora_cita: dateState.time || "No especificada",
-            comida: dateState.food || "No especificada",
-            mensaje: document.getElementById("final-message").textContent,
-          };
-          
-          // Enviar correo usando EmailJS
-          const response = await emailjs.send(
-            "service_o04w0b1",     // Service ID
-            "template_jfh96dv",     // Template ID
-            emailParams
-          );
-          
-          btnSendEmail.textContent = "✅ ¡Correo enviado exitosamente!";
-          console.log("Correo enviado exitosamente:", response);
-          
-          // Restaurar el botón después de 3 segundos
-          setTimeout(() => {
-            btnSendEmail.textContent = btnText;
-            btnSendEmail.disabled = false;
-          }, 3000);
-          
-        } catch (error) {
-          console.error("Error al enviar correo:", error);
-          btnSendEmail.textContent = "❌ Error al enviar. Intenta de nuevo.";
-          btnSendEmail.disabled = false;
-          
-          // Restaurar el botón después de 2 segundos
-          setTimeout(() => {
-            btnSendEmail.textContent = btnText;
-          }, 2000);
-        }
+        // Preparar el asunto y cuerpo del correo
+        const asunto = encodeURIComponent("📅 Detalles de nuestra cita ❤️");
+        const cuerpo = encodeURIComponent(
+          `¡Hola! Aquí están los detalles de nuestra cita:\n\n` +
+          `📅 Fecha: ${fecha}\n` +
+          `⏰ Hora: ${hora}\n` +
+          `🍽️ Comida: ${comida}\n\n` +
+          `💌 Mensaje: ${mensaje}\n\n` +
+          `---\nEnviado desde Date Site con amor 💗`
+        );
+        
+        // Crear el link mailto
+        const mailtoLink = `mailto:juansilva200310@gmail.com?subject=${asunto}&body=${cuerpo}`;
+        
+        // Abrir el cliente de correo
+        window.location.href = mailtoLink;
+        
+        // Mostrar confirmación
+        const btnText = btnSendEmail.textContent;
+        btnSendEmail.textContent = "✅ ¡Abriendo tu cliente de correo!";
+        
+        setTimeout(() => {
+          btnSendEmail.textContent = btnText;
+        }, 3000);
       });
     }
   }
   
-  // Inicializar EmailJS cuando todo esté listo
-  initializeEmailJS();
+  // Configurar el botón cuando el DOM esté listo
+  setupEmailButton();
 
   // ============================================
   // Inicialización
