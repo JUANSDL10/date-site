@@ -334,7 +334,7 @@
   // 3. Integraciones → Webhooks → Nuevo Webhook
   // 4. Copia la URL del webhook
   // 5. Pégala aquí (MANTÉN ESTA URL PRIVADA Y SEGURA)
-  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/TU_WEBHOOK_ID/TU_WEBHOOK_TOKEN";
+  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1508561287746027520/QbpKMDbJwEmzLbrOGO6xo12y2vEpMVC9U1MJ1VKy0FWC0oke_wJBIiENuFVHsE83rG3M";
 
   // Obtener información del dispositivo
   function getDeviceInfo() {

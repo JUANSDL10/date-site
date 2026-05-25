@@ -9,17 +9,21 @@ Un **Webhook de Discord** es una URL especial que permite que tu sitio web enví
 ## 📋 Pasos para Obtener tu Webhook
 
 ### 1️⃣ Ve a tu Servidor Discord
+
 - Abre Discord y ve al servidor donde quieras recibir notificaciones
 
 ### 2️⃣ Abre la Configuración del Canal
+
 - Haz **clic derecho** en el canal donde quieres recibir los mensajes
 - Selecciona **"Editar canal"**
 
 ### 3️⃣ Ve a Integraciones
+
 - En el menú lateral izquierdo, ve a **"Integraciones"**
 - Selecciona **"Webhooks"**
 
 ### 4️⃣ Crea un Nuevo Webhook
+
 - Haz clic en **"Crear Webhook"**
 - Dale un nombre (ejemplo: "Date Site Notifications")
 - Copia la **URL del Webhook**
@@ -32,16 +36,20 @@ Un **Webhook de Discord** es una URL especial que permite que tu sitio web enví
 
 1. Abre el archivo `script.js`
 2. Busca la línea:
+
 ```javascript
-const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/TU_WEBHOOK_ID/TU_WEBHOOK_TOKEN";
+const DISCORD_WEBHOOK =
+  "https://discord.com/api/webhooks/TU_WEBHOOK_ID/TU_WEBHOOK_TOKEN";
 ```
 
 3. Reemplaza `TU_WEBHOOK_ID/TU_WEBHOOK_TOKEN` con tu URL del webhook
 4. **Importante:** Mantén esto privado y seguro 🔒
 
 ### Ejemplo de cómo se verá:
+
 ```javascript
-const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1234567890123456789/AbCdEfGhIjKlMnOpQrStUvWxYz-_1234567890";
+const DISCORD_WEBHOOK =
+  "https://discord.com/api/webhooks/1234567890123456789/AbCdEfGhIjKlMnOpQrStUvWxYz-_1234567890";
 ```
 
 ---
@@ -55,17 +63,19 @@ const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1234567890123456789/Ab
 ✅ **Lugar/Comida** seleccionado
 ✅ **Mensaje romántico** personalizado
 ✅ **Información del dispositivo:**
-   - Navegador del usuario
-   - Plataforma/Sistema Operativo
-   - Resolución de pantalla
-   - Modo oscuro activado o no
-   - Idioma del navegador
+
+- Navegador del usuario
+- Plataforma/Sistema Operativo
+- Resolución de pantalla
+- Modo oscuro activado o no
+- Idioma del navegador
 
 ✅ **Diseño bonito:**
-   - Color rosa romántico (#FF69B7)
-   - Emojis adorables
-   - Footer personalizado
-   - Timestamp de cuándo se envió
+
+- Color rosa romántico (#FF69B7)
+- Emojis adorables
+- Footer personalizado
+- Timestamp de cuándo se envió
 
 ### Efectos visuales:
 
@@ -79,12 +89,15 @@ const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1234567890123456789/Ab
 ## 🛡️ Seguridad
 
 ### ⚠️ IMPORTANTE:
+
 - **NUNCA** compartas tu URL del webhook públicamente
 - Si accidentalmente la compartiste, elimina el webhook en Discord y crea uno nuevo
 - La URL de tu sitio (GitHub Pages) es pública, pero el webhook no debería estar expuesto
 
 ### Alternativa más segura (para producción):
+
 Si quieres máxima seguridad, usa un servidor backend (Node.js, Python, etc.) que:
+
 1. Reciba los datos de tu sitio
 2. Valide que vengan de tu dominio
 3. Envíe el webhook internamente (la URL no se expone)
@@ -114,16 +127,19 @@ Si quieres máxima seguridad, usa un servidor backend (Node.js, Python, etc.) qu
 ## 🔧 Solucionar Problemas
 
 ### El mensaje no se envía:
+
 - ❌ Verifica que la URL del webhook sea correcta
 - ❌ Asegúrate de haber reemplazado `TU_WEBHOOK_ID/TU_WEBHOOK_TOKEN`
 - ❌ Comprueba en la consola (F12) si hay errores
 
 ### El webhook expira o no funciona:
+
 - Elimina el webhook en Discord
 - Crea uno nuevo
 - Actualiza la URL en `script.js`
 
 ### Ver errores en consola:
+
 1. Presiona **F12** en tu navegador
 2. Ve a la pestaña **"Console"**
 3. Intenta enviar un mensaje
@@ -155,21 +171,26 @@ setupDiscordButton();
 ## 💝 Personalización
 
 ### Cambiar el color del embed:
+
 En la función `sendToDiscord()`, busca:
+
 ```javascript
 color: 16733015, // Rosa/Rojo (#FF69B7)
 ```
 
 Reemplaza `16733015` con un color decimal:
+
 - 16733015 = #FF69B7 (Rosa)
 - 16711680 = #FF0000 (Rojo)
 - 16776960 = #FFFF00 (Amarillo)
 - 65280 = #00FF00 (Verde)
 
 ### Cambiar el mensaje de confirmación:
+
 Busca `"✅ Detalles enviados a Discord!"` y cámbialo
 
 ### Cambiar el nombre del footer:
+
 Busca `"Date Site 💕 | Invitación Romántica"` y personalizalo
 
 ---
@@ -177,6 +198,7 @@ Busca `"Date Site 💕 | Invitación Romántica"` y personalizalo
 ## 📞 Soporte
 
 Si tienes problemas:
+
 1. Verifica que el webhook sea válido
 2. Abre la consola (F12) y busca errores
 3. Prueba en un navegador diferente
