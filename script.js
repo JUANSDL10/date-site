@@ -118,16 +118,29 @@
   function moveButtonToRandomPosition() {
     // Asegurar que el botón nunca se salga completamente del viewport
     const padding = 10; // píxeles de margen desde los bordes
-    const maxX = Math.max(padding, window.innerWidth - btnNo.offsetWidth - padding);
-    const maxY = Math.max(padding, window.innerHeight - btnNo.offsetHeight - padding);
+    const buttonWidth = btnNo.offsetWidth || 100;
+    const buttonHeight = btnNo.offsetHeight || 50;
+    
+    // Calcular límites: el botón debe caber completamente dentro del viewport
     const minX = padding;
     const minY = padding;
+    const maxX = window.innerWidth - buttonWidth - padding;
+    const maxY = window.innerHeight - buttonHeight - padding;
     
-    const randomX = Math.random() * (maxX - minX) + minX;
-    const randomY = Math.random() * (maxY - minY) + minY;
+    // Asegurar que max sea al menos igual a min (no números negativos)
+    const constrainedMaxX = Math.max(minX, maxX);
+    const constrainedMaxY = Math.max(minY, maxY);
     
-    btnNo.style.left = randomX + "px";
-    btnNo.style.top = randomY + "px";
+    // Generar posición aleatoria dentro de los límites permitidos
+    const randomX = Math.random() * (constrainedMaxX - minX) + minX;
+    const randomY = Math.random() * (constrainedMaxY - minY) + minY;
+    
+    // Asegurar que los valores están dentro de rango
+    const finalX = Math.max(minX, Math.min(randomX, constrainedMaxX));
+    const finalY = Math.max(minY, Math.min(randomY, constrainedMaxY));
+    
+    btnNo.style.left = finalX + "px";
+    btnNo.style.top = finalY + "px";
   }
   
   // Mover el botón cuando el mouse entra
