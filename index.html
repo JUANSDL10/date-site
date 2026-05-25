@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="¿Quieres salir conmigo? Una invitación romántica especial.">
+  <title>¿Quieres salir conmigo? 💗</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Partículas de flores flotantes (generadas por JS) -->
+  <div class="particles" id="particles" aria-hidden="true"></div>
+
+  <!-- Corazones flotantes en la página final (generados por JS) -->
+  <div class="hearts" id="hearts" aria-hidden="true"></div>
+
+  <main class="app" id="app">
+    <!-- Paso 1: Intro -->
+    <section class="step step--active" id="step-intro" data-step="intro">
+      <article class="card glass">
+        <!-- Reemplaza src con tu imagen: assets/img/portada.jpg -->
+        <div class="card__image-wrap">
+          <img
+            src="assets/img/portada.jpg"
+            alt="Imagen romántica de portada"
+            class="card__image"
+            width="280"
+            height="280"
+          >
+        </div>
+        <!-- Personaliza el texto principal aquí -->
+        <h1 class="card__title">¿Quieres salir conmigo?</h1>
+        <p class="card__subtitle">Prometo que será adorable… y tal vez un poco cursi 💕</p>
+
+        <div class="btn-group">
+          <button type="button" class="btn btn--primary" id="btn-yes" data-action="yes">
+            SÍ 💗
+          </button>
+          <button type="button" class="btn btn--secondary" id="btn-no" data-action="no">
+            no.. 🙈
+          </button>
+        </div>
+
+        <!-- Mensaje al pulsar NO (texto personalizable en script.js también) -->
+        <p class="no-message" id="no-message" role="status" aria-live="polite"></p>
+      </article>
+    </section>
+
+    <!-- Paso 2: Sorpresa -->
+    <section class="step" id="step-surprise" data-step="surprise">
+      <article class="card glass">
+        <h2 class="card__title card__title--big">
+          ¿¡ESPERA, DE VERDAD DIJISTE QUE SÍ!? 😭
+        </h2>
+        <!-- Reemplaza con tu GIF o imagen: assets/img/foto1.jpg -->
+        <div class="card__image-wrap card__image-wrap--bounce">
+          <img
+            src="assets/img/foto1.jpg"
+            alt="Reacción emocionada y tierna"
+            class="card__image card__image--wide"
+            width="320"
+            height="240"
+          >
+        </div>
+        <p class="card__subtitle">Mi corazón literalmente hizo un backflip 🫠💖</p>
+        <button type="button" class="btn btn--primary btn--full" data-next="planner">
+          ¡Vamos a planearlo! ✨
+        </button>
+      </article>
+    </section>
+
+    <!-- Paso 3: Planificador de cita -->
+    <section class="step" id="step-planner" data-step="planner">
+      <article class="card glass">
+        <h2 class="card__title">Elige nuestro momento perfecto 🌸</h2>
+        <p class="card__subtitle">Marca el día y la hora de nuestra cita soñada</p>
+
+        <form class="form" id="date-form" novalidate>
+          <label class="form__label" for="date-input">
+            Fecha de la cita
+          </label>
+          <input
+            type="date"
+            id="date-input"
+            class="form__input"
+            required
+          >
+
+          <label class="form__label" for="time-select">
+            Hora de la cita
+          </label>
+          <select id="time-select" class="form__input form__select" required>
+            <option value="" disabled selected>Selecciona una hora</option>
+            <option value="10:00">10:00 — Brunch romántico ☕</option>
+            <option value="12:00">12:00 — Almuerzo con sol 🌞</option>
+            <option value="15:00">15:00 — Tarde de café y risas</option>
+            <option value="18:00">18:00 — Atardecer juntos 🌅</option>
+            <option value="20:00">20:00 — Cena bajo las estrellas ✨</option>
+            <option value="21:30">21:30 — Noche perfecta 🌙</option>
+          </select>
+
+          <button type="submit" class="btn btn--primary btn--full">
+            Guardar y continuar 💗
+          </button>
+        </form>
+      </article>
+    </section>
+
+    <!-- Paso 4: Selección de comida -->
+    <section class="step" id="step-food" data-step="food">
+      <article class="card glass card--wide">
+        <h2 class="card__title">¿Qué se te antoja comer? 🍽️</h2>
+        <p class="card__subtitle" id="food-hint">Toca tu opción favorita (solo una)</p>
+
+        <div class="food-grid" role="group" aria-label="Selección de comida">
+          <!-- Personaliza las opciones de comida aquí -->
+          <button type="button" class="food-card" data-food="Pizza">
+            <span class="food-card__emoji">🍕</span>
+            <span class="food-card__name">Pizza</span>
+          </button>
+          <button type="button" class="food-card" data-food="Sushi">
+            <span class="food-card__emoji">🍣</span>
+            <span class="food-card__name">Sushi</span>
+          </button>
+          <button type="button" class="food-card" data-food="Hamburguesas">
+            <span class="food-card__emoji">🍔</span>
+            <span class="food-card__name">Hamburguesas</span>
+          </button>
+          <button type="button" class="food-card" data-food="Pasta">
+            <span class="food-card__emoji">🍝</span>
+            <span class="food-card__name">Pasta</span>
+          </button>
+          <button type="button" class="food-card" data-food="Tacos">
+            <span class="food-card__emoji">🌮</span>
+            <span class="food-card__name">Tacos</span>
+          </button>
+          <button type="button" class="food-card" data-food="Ramen">
+            <span class="food-card__emoji">🍜</span>
+            <span class="food-card__name">Ramen</span>
+          </button>
+        </div>
+
+        <p class="selection-text" id="selection-text"></p>
+
+        <button type="button" class="btn btn--primary btn--full" id="btn-food-next" disabled>
+          ¡Listo, siguiente paso! 💕
+        </button>
+      </article>
+    </section>
+
+    <!-- Paso 5: Final romántico -->
+    <section class="step" id="step-final" data-step="final">
+      <article class="card glass card--final">
+        <!-- Reemplaza con tu foto: assets/img/foto2.jpg -->
+        <div class="card__image-wrap card__image-wrap--circle">
+          <img
+            src="assets/img/foto2.jpg"
+            alt="Nuestra foto especial"
+            class="card__image card__image--circle"
+            width="220"
+            height="220"
+          >
+        </div>
+
+        <!-- Mensaje final personalizable -->
+        <h2 class="card__title">¡Nuestra cita está oficialmente sellada! 💌</h2>
+        <p class="card__message" id="final-message">
+          No puedo esperar para pasar ese momento contigo. Eres mi persona favorita en todo el universo, y esta cita ya es lo más bonito de mi semana.
+        </p>
+
+        <!-- Stickers decorativos (reemplaza en assets/img/stickers/) -->
+        <div class="stickers" aria-hidden="true">
+          <img src="assets/img/stickers/gato.png" alt="" class="sticker sticker--left">
+          <img src="assets/img/stickers/shrek.png" alt="" class="sticker sticker--right">
+        </div>
+
+        <footer class="card__footer">
+          <p>Hecho con mucho amor y emoción nerviosa 💗</p>
+          <p class="card__footer-small">Nos vemos pronto, mi cielo ✨</p>
+        </footer>
+      </article>
+    </section>
+  </main>
+
+  <!-- Música de fondo opcional: reemplaza assets/music/song.mp3 -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="assets/music/song.mp3" type="audio/mpeg">
+  </audio>
+
+  <button type="button" class="music-toggle" id="music-toggle" aria-label="Activar o desactivar música" title="Música">
+    🎵
+  </button>
+
+  <script src="script.js"></script>
+</body>
+</html>
