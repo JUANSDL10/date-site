@@ -170,10 +170,43 @@
   // ============================================
   // Formulario de fecha y hora
   // ============================================
+  // Crear elemento para mostrar mensajes de error
+  const formError = document.createElement("p");
+  formError.className = "form__error";
+  formError.setAttribute("role", "alert");
+  formError.setAttribute("aria-live", "polite");
+  formError.style.display = "none";
+  formError.style.color = "#e94b3c";
+  formError.style.marginTop = "1rem";
+  formError.style.textAlign = "center";
+  formError.style.fontSize = "0.95rem";
+  dateForm.appendChild(formError);
+
   dateForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    dateState.date = dateInput.value;
-    dateState.time = timeSelect.value;
+
+    // Validar que ambos campos estén completos
+    const dateValue = dateInput.value.trim();
+    const timeValue = timeSelect.value.trim();
+
+    let errorMessage = "";
+
+    if (!dateValue) {
+      errorMessage = "Por favor, selecciona una fecha para nuestra cita 📅";
+    } else if (!timeValue) {
+      errorMessage = "Por favor, elige una hora para vernos ⏰";
+    }
+
+    if (errorMessage) {
+      formError.textContent = errorMessage;
+      formError.style.display = "block";
+      return; // No continuar si hay error
+    }
+
+    // Si todo está bien, guardar y continuar
+    formError.style.display = "none";
+    dateState.date = dateValue;
+    dateState.time = timeValue;
     goToStep("food");
   });
 
@@ -181,9 +214,35 @@
   const today = new Date().toISOString().split("T")[0];
   dateInput.setAttribute("min", today);
 
+  // Validación en tiempo real: actualizar estado del botón submit
+  const submitBtn = dateForm.querySelector("button[type='submit']");
+  
+  function updateSubmitButtonState() {
+    const dateCompleted = dateInput.value.trim() !== "";
+    const timeCompleted = timeSelect.value.trim() !== "";
+    
+    if (dateCompleted && timeCompleted) {
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = "1";
+      submitBtn.style.cursor = "pointer";
+    } else {
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = "0.5";
+      submitBtn.style.cursor = "not-allowed";
+    }
+  }
+
+  dateInput.addEventListener("change", updateSubmitButtonState);
+  timeSelect.addEventListener("change", updateSubmitButtonState);
+  
+  // Inicializar estado del botón
+  updateSubmitButtonState();
+
   // ============================================
   // Selección de comida
   // ============================================
+  const foodHint = document.getElementById("food-hint");
+  
   foodCards.forEach((card) => {
     card.addEventListener("click", () => {
       foodCards.forEach((c) => c.classList.remove("food-card--selected"));
@@ -191,11 +250,20 @@
       dateState.food = card.dataset.food;
       selectionText.textContent = `¡Excelente elección! ${dateState.food} suena perfecto para nosotros 🥰`;
       btnFoodNext.disabled = false;
+      btnFoodNext.style.opacity = "1";
+      btnFoodNext.style.cursor = "pointer";
+      foodHint.textContent = "¡Ya puedes continuar! ✨";
+      foodHint.style.color = "#10b981";
     });
   });
 
   btnFoodNext.addEventListener("click", () => {
-    if (dateState.food) goToStep("final");
+    if (dateState.food) {
+      goToStep("final");
+    } else {
+      foodHint.textContent = "❌ Por favor, selecciona una opción antes de continuar 🍽️";
+      foodHint.style.color = "#e94b3c";
+    }
   });
 
   // ============================================
