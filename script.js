@@ -116,10 +116,15 @@
   btnNo.style.zIndex = "100";
   
   function moveButtonToRandomPosition() {
-    const maxX = window.innerWidth - btnNo.offsetWidth;
-    const maxY = window.innerHeight - btnNo.offsetHeight;
-    const randomX = Math.random() * maxX;
-    const randomY = Math.random() * maxY;
+    // Asegurar que el botón nunca se salga completamente del viewport
+    const padding = 10; // píxeles de margen desde los bordes
+    const maxX = Math.max(padding, window.innerWidth - btnNo.offsetWidth - padding);
+    const maxY = Math.max(padding, window.innerHeight - btnNo.offsetHeight - padding);
+    const minX = padding;
+    const minY = padding;
+    
+    const randomX = Math.random() * (maxX - minX) + minX;
+    const randomY = Math.random() * (maxY - minY) + minY;
     
     btnNo.style.left = randomX + "px";
     btnNo.style.top = randomY + "px";
