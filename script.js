@@ -108,12 +108,38 @@
   });
 
   // ============================================
-  // Botón NO — fijo, sin moverse; muestra mensaje gracioso
+  // Botón NO — Se mueve aleatoriamente, imposible hacer clic
   // ============================================
-  btnNo.addEventListener("click", () => {
-    const msg = NO_MESSAGES[Math.floor(Math.random() * NO_MESSAGES.length)];
-    noMessage.textContent = msg;
-    noMessage.classList.add("no-message--visible");
+  
+  // Hacer el botón posicionable
+  btnNo.style.position = "fixed";
+  btnNo.style.zIndex = "100";
+  
+  function moveButtonToRandomPosition() {
+    const maxX = window.innerWidth - btnNo.offsetWidth;
+    const maxY = window.innerHeight - btnNo.offsetHeight;
+    const randomX = Math.random() * maxX;
+    const randomY = Math.random() * maxY;
+    
+    btnNo.style.left = randomX + "px";
+    btnNo.style.top = randomY + "px";
+  }
+  
+  // Mover el botón cuando el mouse entra
+  btnNo.addEventListener("mouseenter", moveButtonToRandomPosition);
+  
+  // Mover el botón cuando intenta hacer clic
+  btnNo.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    moveButtonToRandomPosition();
+  });
+  
+  // Mover el botón si intenta enfocarse con teclado
+  btnNo.addEventListener("focus", (e) => {
+    e.preventDefault();
+    moveButtonToRandomPosition();
+    btnNo.blur();
   });
 
   // Botones con data-next
@@ -211,6 +237,60 @@
       musicToggle.title = "Añade song.mp3 en assets/music/";
     }
   });
+
+  // ============================================
+  // EmailJS - Envío de detalles de la cita
+  // ============================================
+  
+  // Inicializar EmailJS con clave pública (público, no confidencial)
+  emailjs.init("GqQsT63h4mVTXYFBH");
+  
+  const btnSendEmail = document.getElementById("btn-send-email");
+  
+  if (btnSendEmail) {
+    btnSendEmail.addEventListener("click", async () => {
+      const btnText = btnSendEmail.textContent;
+      btnSendEmail.textContent = "Enviando... 📮";
+      btnSendEmail.disabled = true;
+      
+      try {
+        // Preparar los datos para el correo
+        const emailParams = {
+          to_email: "juansilva200310@gmail.com",
+          fecha_cita: dateState.date ? formatDateSpanish(dateState.date) : "No especificada",
+          hora_cita: dateState.time || "No especificada",
+          comida: dateState.food || "No especificada",
+          mensaje: document.getElementById("final-message").textContent,
+        };
+        
+        // Enviar correo usando EmailJS
+        const response = await emailjs.send(
+          "service_o04w0b1",     // Service ID
+          "template_jfh96dv",     // Template ID
+          emailParams
+        );
+        
+        btnSendEmail.textContent = "✅ ¡Correo enviado exitosamente!";
+        console.log("Correo enviado exitosamente:", response);
+        
+        // Restaurar el botón después de 3 segundos
+        setTimeout(() => {
+          btnSendEmail.textContent = btnText;
+          btnSendEmail.disabled = false;
+        }, 3000);
+        
+      } catch (error) {
+        console.error("Error al enviar correo:", error);
+        btnSendEmail.textContent = "❌ Error al enviar. Intenta de nuevo.";
+        btnSendEmail.disabled = false;
+        
+        // Restaurar el botón después de 2 segundos
+        setTimeout(() => {
+          btnSendEmail.textContent = btnText;
+        }, 2000);
+      }
+    });
+  }
 
   // ============================================
   // Inicialización
