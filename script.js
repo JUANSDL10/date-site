@@ -325,49 +325,297 @@
   });
 
   // ============================================
-  // Envío de detalles de la cita por correo (mailto)
+  // DISCORD WEBHOOK - Notificaciones de citas
   // ============================================
-  
-  function setupEmailButton() {
+  // ⚠️ IMPORTANTE: Reemplaza esta URL con tu propio Discord Webhook
+  // Cómo obtenerlo:
+  // 1. Ve a tu servidor Discord
+  // 2. Clic derecho en el canal → Editar canal
+  // 3. Integraciones → Webhooks → Nuevo Webhook
+  // 4. Copia la URL del webhook
+  // 5. Pégala aquí (MANTÉN ESTA URL PRIVADA Y SEGURA)
+  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/TU_WEBHOOK_ID/TU_WEBHOOK_TOKEN";
+
+  // Obtener información del dispositivo
+  function getDeviceInfo() {
+    const ua = navigator.userAgent;
+    const browserInfo = {
+      userAgent: ua,
+      platform: navigator.platform,
+      language: navigator.language,
+      resolution: `${window.screen.width}x${window.screen.height}`,
+      isDarkMode: window.matchMedia("(prefers-color-scheme: dark)").matches,
+    };
+    return browserInfo;
+  }
+
+  // Función para crear confetti
+  function createConfetti() {
+    const colors = ["#ff69b4", "#ff1493", "#ff69b4", "#ffb6c1", "#ffc0cb"];
+    for (let i = 0; i < 50; i++) {
+      const confetti = document.createElement("div");
+      confetti.style.position = "fixed";
+      confetti.style.width = "10px";
+      confetti.style.height = "10px";
+      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.left = Math.random() * 100 + "%";
+      confetti.style.top = "-10px";
+      confetti.style.borderRadius = "50%";
+      confetti.style.pointerEvents = "none";
+      confetti.style.zIndex = "9999";
+      confetti.style.animation = `fall ${2 + Math.random() * 1}s ease-out forwards`;
+      document.body.appendChild(confetti);
+
+      setTimeout(() => confetti.remove(), 3000);
+    }
+  }
+
+  // Agregar animación CSS para confetti
+  if (!document.querySelector("style[data-confetti]")) {
+    const style = document.createElement("style");
+    style.setAttribute("data-confetti", "true");
+    style.textContent = `
+      @keyframes fall {
+        to {
+          transform: translateY(100vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Función principal para enviar a Discord
+  async function sendToDiscord() {
     const btnSendEmail = document.getElementById("btn-send-email");
-    
+    const originalText = "Enviar detalles de la cita a Discord 💌";
+    const fecha = dateState.date ? formatDateSpanish(dateState.date) : "No especificada";
+    const hora = dateState.time || "No especificada";
+    const comida = dateState.food || "No especificada";
+    const mensaje = document.getElementById("final-message").textContent;
+    const deviceInfo = getDeviceInfo();
+
+    // Deshabilitar botón y mostrar loading
+    btnSendEmail.disabled = true;
+    btnSendEmail.style.opacity = "0.7";
+    btnSendEmail.style.pointerEvents = "none";
+    const originalContent = btnSendEmail.innerHTML;
+    btnSendEmail.innerHTML = "⏳ Enviando...";
+
+    try {
+      // Construir el embed de Discord
+      const embed = {
+        title: "💖 Nueva cita confirmada",
+        description: `¡La cita ha sido planificada exitosamente! 🎉`,
+        color: 16733015, // Rosa/Rojo (16733015 = #FF69B7)
+        fields: [
+          {
+            name: "📅 Fecha de la cita",
+            value: fecha,
+            inline: true,
+          },
+          {
+            name: "⏰ Hora",
+            value: hora,
+            inline: true,
+          },
+          {
+            name: "🍽️ Comida",
+            value: comida,
+            inline: true,
+          },
+          {
+            name: "💬 Mensaje Romántico",
+            value: mensaje,
+            inline: false,
+          },
+          {
+            name: "💻 Información del Navegador",
+            value: `**Navegador:** ${deviceInfo.userAgent.substring(0, 80)}...\n**Plataforma:** ${deviceInfo.platform}\n**Idioma:** ${deviceInfo.language}`,
+            inline: false,
+          },
+          {
+            name: "📱 Resolución de Pantalla",
+            value: deviceInfo.resolution,
+            inline: true,
+          },
+          {
+            name: "🌙 Modo Oscuro",
+            value: deviceInfo.isDarkMode ? "Sí" : "No",
+            inline: true,
+          },
+        ],
+        timestamp: new Date().toISOString(),
+        footer: {
+          text: "Date Site 💕 | Invitación Romántica",
+          icon_url: "https://emoji.discord.st/emojis/6d5d2aec-dd75-4a55-b88b-48c7a7f6a1b4.png",
+        },
+        thumbnail: {
+          url: "https://emoji.discord.st/emojis/fff16b42-3aec-43df-ab09-cc4c9b5f3b42.png",
+        },
+      };
+
+      // Enviar a Discord
+      const response = await fetch(DISCORD_WEBHOOK, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: "🎉 ¡Nueva cita confirmada en el sitio romántico!",
+          embeds: [embed],
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+
+      // ✅ ÉXITO
+      btnSendEmail.innerHTML = "✅ ¡Detalles enviados a Discord!";
+      btnSendEmail.style.backgroundColor = "#10b981";
+      
+      // Crear confetti
+      createConfetti();
+      
+      // Reproducir sonido de éxito (opcional - usar Web Audio API)
+      playSuccessSound();
+
+      // Mostrar notificación elegante
+      showNotification("¡Detalles enviados exitosamente! 💌", "success");
+
+      // Restaurar botón después de 4 segundos
+      setTimeout(() => {
+        btnSendEmail.innerHTML = "✅ Detalles enviados 💌";
+        btnSendEmail.disabled = false;
+        btnSendEmail.style.opacity = "1";
+        btnSendEmail.style.pointerEvents = "auto";
+        btnSendEmail.style.backgroundColor = "";
+      }, 4000);
+    } catch (error) {
+      console.error("Error enviando a Discord:", error);
+
+      // ❌ ERROR
+      btnSendEmail.innerHTML = "❌ Error al enviar";
+      btnSendEmail.style.backgroundColor = "#ef4444";
+
+      // Mostrar notificación de error
+      showNotification(
+        `Error: ${error.message}. Verifica que el webhook sea válido. 💔`,
+        "error"
+      );
+
+      // Restaurar botón después de 3 segundos
+      setTimeout(() => {
+        btnSendEmail.innerHTML = originalContent;
+        btnSendEmail.disabled = false;
+        btnSendEmail.style.opacity = "1";
+        btnSendEmail.style.pointerEvents = "auto";
+        btnSendEmail.style.backgroundColor = "";
+      }, 3000);
+    }
+  }
+
+  // Función para mostrar notificación elegante
+  function showNotification(message, type = "success") {
+    const notification = document.createElement("div");
+    notification.style.position = "fixed";
+    notification.style.top = "20px";
+    notification.style.right = "20px";
+    notification.style.padding = "1rem 1.5rem";
+    notification.style.borderRadius = "12px";
+    notification.style.fontWeight = "bold";
+    notification.style.zIndex = "10000";
+    notification.style.animation = "slideIn 0.4s ease-out";
+    notification.style.boxShadow = "0 10px 30px rgba(0,0,0,0.3)";
+    notification.style.backdropFilter = "blur(10px)";
+    notification.textContent = message;
+
+    if (type === "success") {
+      notification.style.backgroundColor = "rgba(16, 185, 129, 0.95)";
+      notification.style.color = "white";
+    } else {
+      notification.style.backgroundColor = "rgba(239, 68, 68, 0.95)";
+      notification.style.color = "white";
+    }
+
+    document.body.appendChild(notification);
+
+    // Agregar animación de entrada si no existe
+    if (!document.querySelector("style[data-notification-anim]")) {
+      const style = document.createElement("style");
+      style.setAttribute("data-notification-anim", "true");
+      style.textContent = `
+        @keyframes slideIn {
+          from {
+            transform: translateX(400px);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    setTimeout(() => {
+      notification.style.animation = "slideIn 0.4s ease-out reverse";
+      setTimeout(() => notification.remove(), 400);
+    }, 3000);
+  }
+
+  // Función para reproducir sonido de éxito (usando Web Audio API)
+  function playSuccessSound() {
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      // Crear una melodía corta y bonita
+      const notes = [523.25, 659.25, 783.99]; // C5, E5, G5 (acorde Do Mayor)
+      let currentTime = audioContext.currentTime;
+
+      notes.forEach((frequency, index) => {
+        const nextOscillator = audioContext.createOscillator();
+        const nextGain = audioContext.createGain();
+
+        nextOscillator.frequency.value = frequency;
+        nextOscillator.connect(nextGain);
+        nextGain.connect(audioContext.destination);
+
+        nextGain.gain.setValueAtTime(0.1, currentTime + index * 0.1);
+        nextGain.gain.exponentialRampToValueAtTime(0.01, currentTime + index * 0.1 + 0.1);
+
+        nextOscillator.start(currentTime + index * 0.1);
+        nextOscillator.stop(currentTime + index * 0.1 + 0.1);
+      });
+    } catch (e) {
+      // Si el navegador no soporta Web Audio API, ignora silenciosamente
+      console.log("Web Audio API no disponible, sin sonido");
+    }
+  }
+
+  // Configurar el botón de Discord
+  function setupDiscordButton() {
+    const btnSendEmail = document.getElementById("btn-send-email");
+
     if (btnSendEmail) {
+      // Cambiar el texto del botón
+      btnSendEmail.textContent = "Enviar detalles de la cita a Discord 💌";
+
       btnSendEmail.addEventListener("click", () => {
-        const fecha = dateState.date ? formatDateSpanish(dateState.date) : "No especificada";
-        const hora = dateState.time || "No especificada";
-        const comida = dateState.food || "No especificada";
-        const mensaje = document.getElementById("final-message").textContent;
-        
-        // Preparar el asunto y cuerpo del correo
-        const asunto = encodeURIComponent("📅 Detalles de nuestra cita ❤️");
-        const cuerpo = encodeURIComponent(
-          `¡Hola! Aquí están los detalles de nuestra cita:\n\n` +
-          `📅 Fecha: ${fecha}\n` +
-          `⏰ Hora: ${hora}\n` +
-          `🍽️ Comida: ${comida}\n\n` +
-          `💌 Mensaje: ${mensaje}\n\n` +
-          `---\nEnviado desde Date Site con amor 💗`
-        );
-        
-        // Crear el link mailto
-        const mailtoLink = `mailto:juansilva200310@gmail.com?subject=${asunto}&body=${cuerpo}`;
-        
-        // Abrir el cliente de correo
-        window.location.href = mailtoLink;
-        
-        // Mostrar confirmación
-        const btnText = btnSendEmail.textContent;
-        btnSendEmail.textContent = "✅ ¡Abriendo tu cliente de correo!";
-        
-        setTimeout(() => {
-          btnSendEmail.textContent = btnText;
-        }, 3000);
+        sendToDiscord();
       });
     }
   }
-  
-  // Configurar el botón cuando el DOM esté listo
-  setupEmailButton();
+
+  // Inicializar botón Discord cuando el DOM esté listo
+  setupDiscordButton();
 
   // ============================================
   // Inicialización
